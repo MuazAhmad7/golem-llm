@@ -4,7 +4,7 @@ use anyhow::{anyhow, Result};
 use reqwest::{Client, Method, Response};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use url::Url;
+// URL parsing (removed unused import)
 
 /// Configuration for the Algolia client
 #[derive(Debug, Clone)]
@@ -45,8 +45,6 @@ impl AlgoliaClient {
     /// Create a new Algolia client
     pub fn new(config: AlgoliaConfig) -> Result<Self> {
         let http_client = Client::builder()
-            .pool_idle_timeout(Some(Duration::from_secs(30)))
-            .pool_max_idle_per_host(10)
             .timeout(config.timeout)
             .build()
             .map_err(|e| anyhow!("Failed to create HTTP client: {}", e))?;
@@ -83,12 +81,11 @@ impl AlgoliaClient {
 
         let response = request
             .send()
-            .await
             .map_err(|e| anyhow!("HTTP request failed: {}", e))?;
 
         if !response.status().is_success() {
             let status = response.status();
-            let error_text = response.text().await.unwrap_or_else(|_| "Unknown error".to_string());
+            let error_text = response.text().unwrap_or_else(|_| "Unknown error".to_string());
             return Err(anyhow!("Algolia API error {}: {}", status, error_text));
         }
 
@@ -124,7 +121,7 @@ impl AlgoliaClient {
     /// List all indices
     pub async fn list_indices(&self) -> Result<Vec<String>> {
         let response = self.request(Method::GET, "indexes", None::<&()>).await?;
-        let data: ListIndicesResponse = response.json().await
+        let data: ListIndicesResponse = response.json()
             .map_err(|e| anyhow!("Failed to parse response: {}", e))?;
         
         Ok(data.items.into_iter().map(|item| item.name).collect())
@@ -153,7 +150,7 @@ impl AlgoliaClient {
 
         let batch_request = BatchRequestWrapper { requests };
         let response = self.request(Method::POST, &format!("indexes/{}/batch", index), Some(&batch_request)).await?;
-        let batch_response: BatchResponse = response.json().await
+        let batch_response: BatchResponse = response.json()
             .map_err(|e| anyhow!("Failed to parse batch response: {}", e))?;
         
         Ok(batch_response.object_ids)
@@ -162,7 +159,7 @@ impl AlgoliaClient {
     /// Get an object by ID
     pub async fn get_object(&self, index: &str, object_id: &str) -> Result<Value> {
         let response = self.request(Method::GET, &format!("indexes/{}/objects/{}", index, object_id), None::<&()>).await?;
-        let object: Value = response.json().await
+        let object: Value = response.json()
             .map_err(|e| anyhow!("Failed to parse object: {}", e))?;
         Ok(object)
     }
@@ -190,7 +187,7 @@ impl AlgoliaClient {
     /// Search an index
     pub async fn search(&self, index: &str, query: &AlgoliaSearchQuery) -> Result<AlgoliaSearchResults> {
         let response = self.request(Method::POST, &format!("indexes/{}/query", index), Some(query)).await?;
-        let results: AlgoliaSearchResults = response.json().await
+        let results: AlgoliaSearchResults = response.json()
             .map_err(|e| anyhow!("Failed to parse search results: {}", e))?;
         Ok(results)
     }
