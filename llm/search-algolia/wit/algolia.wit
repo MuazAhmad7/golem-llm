@@ -1,0 +1,5 @@
+package golem:search-algolia@1.0.0;
+
+world search-provider {
+  include golem:search/search-provider@1.0.0;
+}

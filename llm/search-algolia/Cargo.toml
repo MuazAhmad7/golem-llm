@@ -1,0 +1,52 @@
+[package]
+name = "golem-search-algolia"
+version = "0.0.0"
+edition = "2021"
+license = "Apache-2.0"
+homepage = "https://golem.cloud"
+repository = "https://github.com/golemcloud/golem-llm"
+description = "WebAssembly component for Algolia search integration, with special support for Golem Cloud"
+
+[lib]
+path = "src/lib.rs"
+crate-type = ["cdylib"]
+
+[features]
+default = ["durability"]
+durability = ["golem-rust/durability"]
+
+[dependencies]
+# HTTP client for Algolia API
+reqwest = { workspace = true, features = ["json"] }
+# Serialization
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+# Error handling
+anyhow = { workspace = true }
+# UUID generation for documents
+uuid = { version = "1.0", features = ["v4"] }
+# Async traits
+async-trait = "0.1"
+# Logging
+log = { workspace = true }
+# WIT bindings
+wit-bindgen-rt = { workspace = true }
+# Base64 encoding if needed
+base64 = { workspace = true }
+# Golem integration
+golem-rust = { workspace = true, optional = true }
+# URL handling
+url = "2.4"
+
+[package.metadata.component]
+package = "golem:search-algolia"
+
+[package.metadata.component.bindings]
+generate_unused_types = true
+
+[package.metadata.component.target]
+path = "wit"
+
+[package.metadata.component.target.dependencies]
+"golem:search" = { path = "wit/deps/golem-search" }
+"wasi:io" = { path = "wit/deps/wasi:io" }
