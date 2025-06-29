@@ -706,7 +706,7 @@ checksum = "74765f6d916ee2faa39bc8e68e4f3ed8949b48cccdac59983d287a7cb71ce9c5"
 [[package]]
 name = "reqwest"
 version = "0.12.15"
-source = "git+https://github.com/zivergetech/reqwest?branch=update-may-2025#6f3f99ed3fc991474e9e9318f32783433e2bcaa2"
+source = "git+https://github.com/zivergetech/reqwest?branch=update-may-2025#5a27461fdd49f7a4bdbe97326cc7e10fd776a090"
 dependencies = [
  "base64",
  "bytes",

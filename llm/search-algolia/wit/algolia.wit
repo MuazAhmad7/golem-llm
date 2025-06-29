@@ -1,0 +1,134 @@
+package golem:search-algolia@1.0.0;
+
+interface search {
+  // --- Field Types ---
+  
+  enum field-type {
+    text,
+    number,
+    boolean,
+    date,
+    object,
+    array,
+  }
+
+  // --- Schema Definition ---
+
+  record field-definition {
+    name: string,
+    field-type: field-type,
+    searchable: bool,
+    facetable: bool,
+    retrievable: bool,
+    sortable: bool,
+  }
+
+  record schema {
+    primary-key: string,
+    fields: list<field-definition>,
+    provider-params: option<string>, // JSON string for provider-specific settings
+  }
+
+  // --- Document Operations ---
+
+  record document {
+    id: option<string>,
+    data: string, // JSON-encoded document data
+  }
+
+  // --- Search Operations ---
+
+  record facet-filter {
+    field: string,
+    value: string,
+  }
+
+  record search-query {
+    query: string,
+    facet-filters: list<facet-filter>,
+    page: option<u32>,
+    per-page: option<u32>,
+    sort-by: option<string>,
+    sort-order: option<string>, // "asc" or "desc"
+  }
+
+  record facet-value {
+    value: string,
+    count: u32,
+  }
+
+  record facet-result {
+    field: string,
+    values: list<facet-value>,
+  }
+
+  record search-hit {
+    id: string,
+    data: string, // JSON-encoded document data
+    score: option<f32>,
+    highlights: option<string>, // JSON-encoded highlights
+  }
+
+  record search-results {
+    hits: list<search-hit>,
+    total-hits: u32,
+    page: u32,
+    per-page: u32,
+    facets: list<facet-result>,
+    processing-time-ms: option<u32>,
+  }
+
+  // --- Error Handling ---
+
+  enum error-code {
+    invalid-request,
+    authentication-failed,
+    rate-limit-exceeded,
+    internal-error,
+    unsupported,
+    unknown,
+  }
+
+  record error {
+    code: error-code,
+    message: string,
+    retry-after: option<u32>, // seconds to wait before retry
+  }
+
+  // --- Core Functions ---
+
+  create-index: func(
+    name: string,
+    schema: schema
+  ) -> result<_, error>;
+
+  delete-index: func(
+    name: string
+  ) -> result<_, error>;
+
+  upsert-documents: func(
+    index: string,
+    documents: list<document>
+  ) -> result<u32, error>; // returns number of documents processed
+
+  delete-documents: func(
+    index: string,
+    document-ids: list<string>
+  ) -> result<u32, error>; // returns number of documents deleted
+
+  search: func(
+    index: string,
+    query: search-query
+  ) -> result<search-results, error>;
+
+  get-document: func(
+    index: string,
+    document-id: string
+  ) -> result<document, error>;
+
+  list-indices: func() -> result<list<string>, error>;
+}
+
+world search-provider {
+  export search;
+}
