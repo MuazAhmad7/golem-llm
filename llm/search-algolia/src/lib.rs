@@ -2,7 +2,7 @@ use anyhow::Result;
 use log::{error, info, warn};
 
 mod bindings;
-mod client;
+pub mod client;
 mod conversions;
 
 use bindings::*;

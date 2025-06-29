@@ -212,6 +212,37 @@ pub struct AlgoliaIndexSettings {
     pub highlight_pre_tag: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub highlight_post_tag: Option<String>,
+    // Advanced language and typo settings
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub min_word_size_for_1_typo: Option<u32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub min_word_size_for_2_typos: Option<u32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub typo_tolerance_min: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub typo_tolerance_strict: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub remove_stop_words: Option<Value>, // Can be bool or array of languages
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub ignore_plurals: Option<Value>, // Can be bool or array of languages
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub query_languages: Option<Vec<String>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub index_languages: Option<Vec<String>>,
+    // Synonyms and stop words
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub synonyms: Option<Vec<HashMap<String, Value>>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub stop_words: Option<Vec<String>>,
+    // Relevance and ranking
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub attribute_criteria_computed_by_min_proximity: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub min_proximity: Option<u32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub distinct: Option<Value>, // Can be bool or number
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub separators_to_index: Option<String>,
 }
 
 impl Default for AlgoliaIndexSettings {
@@ -225,6 +256,20 @@ impl Default for AlgoliaIndexSettings {
             typo_tolerance: None,
             highlight_pre_tag: Some("<em>".to_string()),
             highlight_post_tag: Some("</em>".to_string()),
+            min_word_size_for_1_typo: None,
+            min_word_size_for_2_typos: None,
+            typo_tolerance_min: None,
+            typo_tolerance_strict: None,
+            remove_stop_words: None,
+            ignore_plurals: None,
+            query_languages: None,
+            index_languages: None,
+            synonyms: None,
+            stop_words: None,
+            attribute_criteria_computed_by_min_proximity: None,
+            min_proximity: None,
+            distinct: None,
+            separators_to_index: None,
         }
     }
 }
@@ -250,6 +295,46 @@ pub struct AlgoliaSearchQuery {
     pub attributes_to_retrieve: Option<Vec<String>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub sort: Option<Vec<String>>,
+    // Advanced search features
+    #[serde(rename = "facetFilters")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub facet_filters: Option<Value>, // Can be array of strings or nested arrays for complex boolean logic
+    #[serde(rename = "numericFilters")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub numeric_filters: Option<Vec<String>>,
+    #[serde(rename = "tagFilters")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub tag_filters: Option<Value>, // Can be array of strings or nested arrays
+    #[serde(rename = "attributesToHighlight")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub attributes_to_highlight: Option<Vec<String>>,
+    #[serde(rename = "attributesToSnippet")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub attributes_to_snippet: Option<Vec<String>>,
+    #[serde(rename = "highlightPreTag")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub highlight_pre_tag_override: Option<String>,
+    #[serde(rename = "highlightPostTag")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub highlight_post_tag_override: Option<String>,
+    #[serde(rename = "restrictHighlightAndSnippetArrays")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub restrict_highlight_and_snippet_arrays: Option<bool>,
+    #[serde(rename = "getRankingInfo")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub get_ranking_info: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub distinct: Option<Value>, // Can be bool or number
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub typo_tolerance: Option<String>, // "true", "false", "min", "strict"
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub analytics: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub synonyms: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub replaceSynonymsInHighlight: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub minProximity: Option<u32>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
