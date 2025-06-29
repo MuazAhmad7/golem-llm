@@ -203,7 +203,7 @@
           3,
           4
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -250,7 +250,7 @@
           3,
           4
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -297,7 +297,7 @@
           5,
           6
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -342,7 +342,7 @@
         "dependencies": [
           7
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -350,7 +350,7 @@
             "description": "Develop faceted search functionality to allow users to filter search results by various attributes",
             "dependencies": [],
             "details": "Implement faceted navigation using Algolia's faceting capabilities. Create UI components for displaying facets, handling facet selection and deselection, and updating search results accordingly. Include support for hierarchical facets and facet value counts. Ensure proper integration with the WIT interface.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -361,7 +361,7 @@
               1
             ],
             "details": "Implement a system for building complex filters with AND/OR operations. Design a query builder interface that allows users to construct advanced search queries. Translate these complex queries into Algolia's filtering syntax. Test with various combinations of filters to ensure correct results are returned.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -372,7 +372,7 @@
               1
             ],
             "details": "Develop custom ranking rules that can be configured through the WIT interface. Implement multi-attribute sorting capabilities allowing users to sort by multiple fields simultaneously. Create UI components for selecting and configuring ranking and sorting options. Ensure performance optimization for complex sorting scenarios.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -385,7 +385,7 @@
               3
             ],
             "details": "Create advanced highlighting functionality that emphasizes search terms in results with customizable styling. Implement attribute retrieval controls to allow selective loading of attributes for performance optimization. Design UI components for configuring highlighting and attribute retrieval options. Ensure proper integration with existing search result display components.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           }
         ]
@@ -400,7 +400,7 @@
         "dependencies": [
           8
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -408,7 +408,7 @@
             "description": "Configure typo tolerance levels and language-specific settings in the Algolia implementation",
             "dependencies": [],
             "details": "Implement typo tolerance configuration including minWordSizefor1Typo, minWordSizefor2Typos, and typoTolerance settings. Configure language-specific settings such as removeStopWords, ignorePlurals and configure specific language analyzers based on the content. Test different configurations to ensure optimal performance for the specific use case.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -419,7 +419,7 @@
               1
             ],
             "details": "Set up customRanking attributes to prioritize business metrics. Configure searchableAttributes with proper ordering and weighting. Implement attributesForFaceting for relevant filtering. Fine-tune relevance with distinct, ranking formula adjustments, and optionally implement personalization if needed. Test different configurations with real queries to validate improvements.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -431,7 +431,7 @@
               2
             ],
             "details": "Create and manage synonym lists including one-way and two-way synonyms. Configure custom stop words lists appropriate for the content domain. Set up proper handling of plurals and other word forms. Test these configurations with edge case queries to ensure they're working as expected. Document all linguistic configurations for future reference and maintenance.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           }
         ]
