@@ -1,0 +1,74 @@
+package wasi:io@0.2.3;
+
+/// WASI I/O is an I/O abstraction API which is currently focused on providing
+/// stream types.
+@since(version = 0.2.0)
+interface streams {
+    @since(version = 0.2.0)
+    use error.{error};
+    @since(version = 0.2.0)
+    use poll.{pollable};
+
+    /// An error for input-stream and output-stream operations.
+    @since(version = 0.2.0)
+    variant stream-error {
+        /// The last operation (a write or flush) failed before completion.
+        last-operation-failed(error),
+        /// The stream is closed: no more input will be accepted by the
+        /// stream.
+        closed
+    }
+
+    /// An input bytestream.
+    @since(version = 0.2.0)
+    resource input-stream {
+        @since(version = 0.2.0)
+        read: func(len: u64) -> result<list<u8>, stream-error>;
+        
+        @since(version = 0.2.0)
+        blocking-read: func(len: u64) -> result<list<u8>, stream-error>;
+        
+        @since(version = 0.2.0)
+        skip: func(len: u64) -> result<u64, stream-error>;
+        
+        @since(version = 0.2.0)
+        blocking-skip: func(len: u64) -> result<u64, stream-error>;
+        
+        @since(version = 0.2.0)
+        subscribe: func() -> pollable;
+    }
+
+    /// An output bytestream.
+    @since(version = 0.2.0)
+    resource output-stream {
+        @since(version = 0.2.0)
+        check-write: func() -> result<u64, stream-error>;
+        
+        @since(version = 0.2.0)
+        write: func(contents: list<u8>) -> result<_, stream-error>;
+        
+        @since(version = 0.2.0)
+        blocking-write-and-flush: func(contents: list<u8>) -> result<_, stream-error>;
+        
+        @since(version = 0.2.0)
+        flush: func() -> result<_, stream-error>;
+        
+        @since(version = 0.2.0)
+        blocking-flush: func() -> result<_, stream-error>;
+        
+        @since(version = 0.2.0)
+        subscribe: func() -> pollable;
+        
+        @since(version = 0.2.0)
+        write-zeroes: func(len: u64) -> result<_, stream-error>;
+        
+        @since(version = 0.2.0)
+        blocking-write-zeroes-and-flush: func(len: u64) -> result<_, stream-error>;
+        
+        @since(version = 0.2.0)
+        splice: func(src: borrow<input-stream>, len: u64) -> result<u64, stream-error>;
+        
+        @since(version = 0.2.0)
+        blocking-splice: func(src: borrow<input-stream>, len: u64) -> result<u64, stream-error>;
+    }
+}

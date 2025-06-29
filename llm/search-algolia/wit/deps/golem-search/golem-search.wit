@@ -1,0 +1,182 @@
+package golem:search@1.0.0;
+
+interface search {
+  // --- Error Codes ---
+  
+  enum error-code {
+    invalid-request,
+    authentication-failed,
+    rate-limit-exceeded,
+    internal-error,
+    unsupported,
+    index-not-found,
+    document-not-found,
+    invalid-query,
+    timeout,
+    unknown,
+  }
+
+  // --- Core Types ---
+  
+  record field-definition {
+    name: string,
+    field-type: field-type,
+    searchable: bool,
+    facetable: bool,
+    retrievable: bool,
+    sortable: bool,
+  }
+
+  enum field-type {
+    string,
+    number,
+    boolean,
+    object,
+    array,
+  }
+
+  record schema {
+    fields: list<field-definition>,
+    primary-key: option<string>,
+    provider-params: option<list<kv>>,
+  }
+
+  record kv {
+    key: string,
+    value: string,
+  }
+
+  // --- Document Types ---
+  
+  variant document-value {
+    string(string),
+    number(f64),
+    boolean(bool),
+    array(list<document-value>),
+    object(list<kv>),
+  }
+
+  record document {
+    id: option<string>,
+    fields: list<tuple<string, document-value>>,
+  }
+
+  // --- Search Types ---
+  
+  record search-query {
+    q: string,
+    filters: option<list<string>>,
+    facets: option<list<facet-query>>,
+    page: option<u32>,
+    per-page: option<u32>,
+    sort: option<list<string>>,
+    highlight: option<highlight-config>,
+    retrieve-fields: option<list<string>>,
+    timeout: option<u32>,
+    provider-params: option<list<kv>>,
+  }
+
+  record facet-query {
+    field: string,
+    filters: list<facet-filter>,
+  }
+
+  record facet-filter {
+    value: string,
+    selected: bool,
+  }
+
+  record highlight-config {
+    pre-tag: string,
+    post-tag: string,
+    fields: option<list<string>>,
+  }
+
+  record search-hit {
+    id: string,
+    fields: list<tuple<string, document-value>>,
+    highlights: option<list<tuple<string, string>>>,
+    score: option<f64>,
+  }
+
+  record facet-result {
+    field: string,
+    values: list<facet-value>,
+  }
+
+  record facet-value {
+    value: string,
+    count: u32,
+  }
+
+  record search-results {
+    hits: list<search-hit>,
+    total: u32,
+    page: u32,
+    per-page: u32,
+    facets: option<list<facet-result>>,
+    query-time-ms: option<u32>,
+  }
+
+  // --- Error Handling ---
+  
+  record error {
+    code: error-code,
+    message: string,
+    provider-error-json: option<string>,
+  }
+
+  // --- Core Functions ---
+
+  // Index Management
+  create-index: func(
+    name: string,
+    schema: schema
+  ) -> result<_, error>;
+
+  delete-index: func(
+    name: string
+  ) -> result<_, error>;
+
+  list-indices: func() -> result<list<string>, error>;
+
+  get-schema: func(
+    index: string
+  ) -> result<schema, error>;
+
+  // Document Operations
+  upsert-document: func(
+    index: string,
+    document: document
+  ) -> result<string, error>;
+
+  batch-upsert-documents: func(
+    index: string,
+    documents: list<document>
+  ) -> result<list<string>, error>;
+
+  get-document: func(
+    index: string,
+    id: string
+  ) -> result<document, error>;
+
+  delete-document: func(
+    index: string,
+    id: string
+  ) -> result<_, error>;
+
+  batch-delete-documents: func(
+    index: string,
+    ids: list<string>
+  ) -> result<_, error>;
+
+  // Search Operations
+  search: func(
+    index: string,
+    query: search-query
+  ) -> result<search-results, error>;
+}
+
+world search-library {
+    export search;
+}
