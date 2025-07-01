@@ -1,0 +1,37 @@
+package test:search-exports@0.0.0;
+
+interface test-search-api {
+    // Core search functionality tests
+    test-basic-search: func() -> string;
+    test-faceted-search: func() -> string;
+    test-search-with-filters: func() -> string;
+    test-bulk-indexing: func() -> string;
+    test-document-operations: func() -> string;
+    
+    // Advanced features tests
+    test-search-highlighting: func() -> string;
+    test-autocomplete: func() -> string;
+    test-aggregations: func() -> string;
+    test-streaming-search: func() -> string;
+    
+    // Error handling and edge cases
+    test-error-handling: func() -> string;
+    test-malformed-queries: func() -> string;
+    test-large-result-sets: func() -> string;
+    
+    // Performance and durability tests
+    test-concurrent-operations: func() -> string;
+    test-durability-checkpoints: func() -> string;
+    test-graceful-degradation: func() -> string;
+    
+    // Provider-specific feature tests
+    test-provider-capabilities: func() -> string;
+    test-fallback-mechanisms: func() -> string;
+    test-configuration-validation: func() -> string;
+}
+
+world test-search {
+    import golem:search/search@1.0.0;
+    import test:helper-client/test-helper-client;
+    export test-search-api;
+}

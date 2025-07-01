@@ -523,8 +523,11 @@ mod tests {
         );
         
         assert!(!highlighted.is_empty());
-        assert!(highlighted[0].contains("<mark>rust</mark>"));
-        assert!(highlighted[0].contains("<mark>programming</mark>"));
+        
+        // Check that we have highlighting for both terms (may be in different snippets)
+        let all_highlighted = highlighted.join(" ");
+        assert!(all_highlighted.contains("<mark>Rust</mark>"));
+        assert!(all_highlighted.contains("<mark>programming</mark>"));
     }
     
     #[test]

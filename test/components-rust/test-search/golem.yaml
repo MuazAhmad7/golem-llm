@@ -1,0 +1,22 @@
+_format_version: "0.1.0"
+
+component_name: "test-search"
+
+component_version: "0.0.0"
+
+source_wit_root: "wit"
+
+build:
+  source_dir: "."
+  target_dir: "target"
+
+workers:
+  test-search:
+    component: "test-search"
+    environment:
+      RUST_LOG: "info"
+      GOLEM_WORKER_NAME: "test-search-worker"
+    
+worker_executors:
+  - name: "search-test-executor"
+    component: "test-search"

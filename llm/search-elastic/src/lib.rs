@@ -289,3 +289,85 @@ impl ElasticSearchProvider {
         Ok(())
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use golem_search::types::{SearchQuery, Doc, HighlightConfig};
+    use golem_search::config::{SearchConfig, ProviderConfig};
+    use serde_json::json;
+    use std::time::Duration;
+
+    fn create_test_config() -> SearchConfig {
+        SearchConfig {
+            endpoint: Some("http://localhost:9200".to_string()),
+            timeout: Duration::from_secs(5),
+            max_retries: 3,
+            log_level: "info".to_string(),
+            provider_config: ProviderConfig::ElasticSearch {
+                username: Some("test_user".to_string()),
+                password: Some("test_pass".to_string()),
+                cloud_id: None,
+                ca_cert: None,
+            },
+        }
+    }
+
+    fn create_test_document() -> Doc {
+        Doc {
+            id: "test_doc_1".to_string(),
+            content: json!({
+                "title": "Test Document",
+                "content": "This is a test document for ElasticSearch",
+                "category": "test",
+                "tags": ["elasticsearch", "test", "search"],
+                "price": 29.99,
+                "rating": 4.5,
+                "created_at": "2024-01-15T10:30:00Z"
+            }).to_string(),
+        }
+    }
+
+    #[test]
+    fn test_config_validation() {
+        let config = create_test_config();
+        assert!(config.validate().is_ok());
+    }
+
+    #[test]
+    fn test_document_creation() {
+        let doc = create_test_document();
+        assert_eq!(doc.id, "test_doc_1");
+        
+        // Parse and validate JSON content
+        let content: serde_json::Value = serde_json::from_str(&doc.content).unwrap();
+        assert_eq!(content["title"], "Test Document");
+        assert_eq!(content["category"], "test");
+    }
+
+    #[test]
+    fn test_search_query_structure() {
+        let query = SearchQuery {
+            q: Some("test search".to_string()),
+            filters: vec!["category:test".to_string()],
+            sort: vec!["rating:desc".to_string()],
+            facets: vec!["category".to_string()],
+            page: Some(1),
+            per_page: Some(10),
+            offset: Some(0),
+            highlight: Some(HighlightConfig {
+                fields: vec!["title".to_string()],
+                pre_tag: Some("<mark>".to_string()),
+                post_tag: Some("</mark>".to_string()),
+                max_length: Some(150),
+            }),
+            config: None,
+        };
+        
+        assert!(!query.q.as_ref().unwrap().is_empty());
+        assert_eq!(query.filters.len(), 1);
+        assert_eq!(query.sort.len(), 1);
+        assert_eq!(query.facets.len(), 1);
+        assert!(query.highlight.is_some());
+    }
+}
