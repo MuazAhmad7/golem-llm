@@ -87,7 +87,7 @@ interface types {
   /// Field definition
   record schema-field {
     name: string,
-    type: field-type,
+    field-type: field-type,
     required: bool,
     facet: bool,
     sort: bool,

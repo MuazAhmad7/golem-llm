@@ -477,7 +477,7 @@ pub mod index_utils {
         }
         
         // Validate field type constraints
-        match field.r#type {
+        match field.field_type {
             FieldType::GeoPoint => {
                 if field.facet {
                     return Err(SearchError::invalid_query(

@@ -92,34 +92,6 @@ impl From<url::ParseError> for SearchError {
     }
 }
 
-// Convert to WIT types
-impl From<SearchError> for crate::types::SearchError {
-    fn from(err: SearchError) -> Self {
-        match err {
-            SearchError::IndexNotFound(_) => Self::IndexNotFound,
-            SearchError::InvalidQuery(msg) => Self::InvalidQuery(msg),
-            SearchError::Unsupported => Self::Unsupported,
-            SearchError::Internal(msg) => Self::Internal(msg),
-            SearchError::Timeout => Self::Timeout,
-            SearchError::RateLimited => Self::RateLimited,
-        }
-    }
-}
-
-// Convert from WIT types
-impl From<crate::types::SearchError> for SearchError {
-    fn from(err: crate::types::SearchError) -> Self {
-        match err {
-            crate::types::SearchError::IndexNotFound => Self::IndexNotFound("Unknown index".to_string()),
-            crate::types::SearchError::InvalidQuery(msg) => Self::InvalidQuery(msg),
-            crate::types::SearchError::Unsupported => Self::Unsupported,
-            crate::types::SearchError::Internal(msg) => Self::Internal(msg),
-            crate::types::SearchError::Timeout => Self::Timeout,
-            crate::types::SearchError::RateLimited => Self::RateLimited,
-        }
-    }
-}
-
 /// Utility macro for creating provider-specific error mappings
 #[macro_export]
 macro_rules! map_provider_error {

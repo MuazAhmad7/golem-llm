@@ -6,12 +6,128 @@
 use std::collections::HashMap;
 use serde::{Deserialize, Serialize};
 
-// Re-export WIT-generated types
-pub use crate::{
-    IndexName, DocumentId, Json, Doc, HighlightConfig, SearchConfig as WitSearchConfig,
-    SearchQuery, SearchHit, SearchResults, FieldType, SchemaField, Schema,
-    SearchError,
-};
+// Type aliases for common types (these will be replaced with WIT types at the component level)
+pub type IndexName = String;
+pub type DocumentId = String;
+pub type Json = String;
+
+/// Document payload
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Doc {
+    pub id: DocumentId,
+    pub content: Json,
+}
+
+/// Highlight configuration
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct HighlightConfig {
+    pub fields: Vec<String>,
+    pub pre_tag: Option<String>,
+    pub post_tag: Option<String>,
+    pub max_length: Option<u32>,
+}
+
+/// Advanced search tuning
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SearchConfig {
+    pub timeout_ms: Option<u32>,
+    pub boost_fields: Vec<(String, f32)>,
+    pub attributes_to_retrieve: Vec<String>,
+    pub language: Option<String>,
+    pub typo_tolerance: Option<bool>,
+    pub exact_match_boost: Option<f32>,
+    pub provider_params: Option<Json>,
+}
+
+/// Search request
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SearchQuery {
+    pub q: Option<String>,
+    pub filters: Vec<String>,
+    pub sort: Vec<String>,
+    pub facets: Vec<String>,
+    pub page: Option<u32>,
+    pub per_page: Option<u32>,
+    pub offset: Option<u32>,
+    pub highlight: Option<HighlightConfig>,
+    pub config: Option<SearchConfig>,
+}
+
+/// Search hit
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SearchHit {
+    pub id: DocumentId,
+    pub score: Option<f64>,
+    pub content: Option<Json>,
+    pub highlights: Option<Json>,
+}
+
+/// Search result set
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SearchResults {
+    pub total: Option<u32>,
+    pub page: Option<u32>,
+    pub per_page: Option<u32>,
+    pub hits: Vec<SearchHit>,
+    pub facets: Option<Json>,
+    pub took_ms: Option<u32>,
+}
+
+/// Field schema types
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum FieldType {
+    Text,
+    Keyword,
+    Integer,
+    Float,
+    Boolean,
+    Date,
+    GeoPoint,
+}
+
+/// Field definition
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SchemaField {
+    pub name: String,
+    pub field_type: FieldType,
+    pub required: bool,
+    pub facet: bool,
+    pub sort: bool,
+    pub index: bool,
+}
+
+/// Index schema
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Schema {
+    pub fields: Vec<SchemaField>,
+    pub primary_key: Option<String>,
+}
+
+/// Search error types
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum SearchError {
+    IndexNotFound(String),
+    InvalidQuery(String),
+    Unsupported,
+    Internal(String),
+    Timeout,
+    RateLimited,
+}
+
+impl std::fmt::Display for SearchError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::IndexNotFound(name) => write!(f, "Index not found: {}", name),
+            Self::InvalidQuery(msg) => write!(f, "Invalid query: {}", msg),
+            Self::Unsupported => write!(f, "Operation not supported"),
+            Self::Internal(msg) => write!(f, "Internal error: {}", msg),
+            Self::Timeout => write!(f, "Operation timed out"),
+            Self::RateLimited => write!(f, "Rate limit exceeded"),
+        }
+    }
+}
+
+impl std::error::Error for SearchError {}
 
 /// Capabilities that a search provider supports
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -254,7 +370,7 @@ impl QueryBuilder {
     }
     
     /// Set search configuration
-    pub fn config(mut self, config: WitSearchConfig) -> Self {
+    pub fn config(mut self, config: SearchConfig) -> Self {
         self.query.config = Some(config);
         self
     }
@@ -368,7 +484,7 @@ impl SchemaBuilder {
     ) -> Self {
         self.fields.push(SchemaField {
             name,
-            r#type: field_type,
+            field_type,
             required,
             facet,
             sort,
