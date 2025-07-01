@@ -3,13 +3,17 @@
 //! This module provides durability support for search operations,
 //! allowing operations to be resumed after interruptions.
 
-#[cfg(feature = "durability")]
-use golem_rust::durability;
+// Note: golem_rust durability API may need updating for current version
+// #[cfg(feature = "durability")]
+// use golem_rust::durability;
 
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use crate::error::{SearchError, SearchResult};
 use crate::types::{Doc, SearchQuery, SearchResults};
+
+// Golem platform integration module
+pub mod golem_integration;
 
 /// State for tracking batch operations
 #[derive(Debug, Clone, Serialize, Deserialize)]

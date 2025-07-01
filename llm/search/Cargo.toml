@@ -17,8 +17,8 @@ wit-bindgen = "0.40.0"
 wit-bindgen-rt = { workspace = true }
 
 # Serialization
-serde = { workspace = true, features = ["derive"] }
-serde_json = { workspace = true }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
 
 # Error handling
 anyhow = { workspace = true }
@@ -31,10 +31,10 @@ tokio = { version = "1.0", features = ["full"] }
 reqwest = { workspace = true, features = ["json"] }
 
 # Logging
-log = { workspace = true }
+log = "0.4"
 
 # Regex for highlighting fallback
-regex = "1.10"
+regex = "1.0"
 
 # Date/time handling for test reports
 chrono = { version = "0.4", features = ["serde"] }
@@ -43,7 +43,7 @@ chrono = { version = "0.4", features = ["serde"] }
 dotenvy = "0.15"
 
 # UUID generation
-uuid = { version = "1.0", features = ["v4"] }
+uuid = { version = "1.0", features = ["v4", "serde"] }
 
 # URL parsing
 url = "2.4"
@@ -52,11 +52,11 @@ url = "2.4"
 base64 = { workspace = true }
 
 # Golem integration
-golem-rust = { workspace = true, optional = true }
+golem-rust = { version = "0.1", optional = true }
 
 [features]
-default = ["durability"]
-durability = ["golem-rust/durability"]
+default = []
+durability = ["golem-rust"]
 
 [package.metadata.component]
 package = "golem:search"

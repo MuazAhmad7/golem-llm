@@ -405,7 +405,7 @@ dependencies = [
 name = "golem-llm"
 version = "0.0.0"
 dependencies = [
- "golem-rust",
+ "golem-rust 1.6.0",
  "log",
  "mime",
  "nom",
@@ -421,7 +421,7 @@ version = "0.0.0"
 dependencies = [
  "base64 0.22.1",
  "golem-llm",
- "golem-rust",
+ "golem-rust 1.6.0",
  "log",
  "reqwest",
  "serde",
@@ -435,7 +435,7 @@ version = "0.0.0"
 dependencies = [
  "base64 0.22.1",
  "golem-llm",
- "golem-rust",
+ "golem-rust 1.6.0",
  "log",
  "reqwest",
  "serde",
@@ -449,7 +449,7 @@ version = "0.0.0"
 dependencies = [
  "base64 0.21.7",
  "golem-llm",
- "golem-rust",
+ "golem-rust 1.6.0",
  "log",
  "mime_guess",
  "reqwest",
@@ -465,7 +465,7 @@ version = "0.0.0"
 dependencies = [
  "base64 0.22.1",
  "golem-llm",
- "golem-rust",
+ "golem-rust 1.6.0",
  "log",
  "reqwest",
  "serde",
@@ -479,12 +479,23 @@ version = "0.0.0"
 dependencies = [
  "base64 0.22.1",
  "golem-llm",
- "golem-rust",
+ "golem-rust 1.6.0",
  "log",
  "reqwest",
  "serde",
  "serde_json",
  "wit-bindgen-rt 0.40.0",
+]
+
+[[package]]
+name = "golem-rust"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cfc1ecd87be3fc27ffbd12bb2e14b6a2bb463bc4e6714a250df2d7a79cda5c95"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
 ]
 
 [[package]]
@@ -521,7 +532,7 @@ dependencies = [
  "base64 0.22.1",
  "chrono",
  "dotenvy",
- "golem-rust",
+ "golem-rust 0.1.0",
  "log",
  "regex",
  "reqwest",
@@ -543,7 +554,7 @@ dependencies = [
  "async-trait",
  "base64 0.22.1",
  "env_logger",
- "golem-rust",
+ "golem-rust 1.6.0",
  "log",
  "reqwest",
  "serde",
@@ -561,7 +572,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "base64 0.22.1",
- "golem-rust",
+ "golem-rust 1.6.0",
  "golem-search",
  "log",
  "reqwest",
@@ -581,7 +592,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "base64 0.22.1",
- "golem-rust",
+ "golem-rust 1.6.0",
  "golem-search",
  "log",
  "reqwest",
@@ -601,7 +612,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "base64 0.22.1",
- "golem-rust",
+ "golem-rust 1.6.0",
  "golem-search",
  "log",
  "reqwest",
@@ -621,7 +632,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "base64 0.22.1",
- "golem-rust",
+ "golem-rust 1.6.0",
  "golem-search",
  "log",
  "reqwest",

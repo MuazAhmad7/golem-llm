@@ -194,12 +194,32 @@ async fn run_comprehensive_test(test_index: &str) -> Result<()> {
     // ========== TEST 3: Basic Search ==========
     info!("🔍 Test 3: Basic Search");
     
-    // Basic text search
+    // Basic text search - create search query manually since we can't use Default
     let search_query = AlgoliaSearchQuery {
         query: "coffee".to_string(),
         hits_per_page: Some(10),
         page: Some(0),
-        ..Default::default()
+        filters: None,
+        facets: None,
+        highlight_pre_tag: None,
+        highlight_post_tag: None,
+        attributes_to_retrieve: None,
+        sort: None,
+        facet_filters: None,
+        numeric_filters: None,
+        tag_filters: None,
+        attributes_to_highlight: None,
+        attributes_to_snippet: None,
+        highlight_pre_tag_override: None,
+        highlight_post_tag_override: None,
+        restrict_highlight_and_snippet_arrays: None,
+        get_ranking_info: None,
+        distinct: None,
+        typo_tolerance: None,
+        analytics: None,
+        synonyms: None,
+        replaceSynonymsInHighlight: None,
+        minProximity: None,
     };
     
     let results = client.search(test_index, &search_query).await
@@ -404,35 +424,4 @@ async fn run_comprehensive_test(test_index: &str) -> Result<()> {
     
     info!("🎉 All tests completed successfully!");
     Ok(())
-}
-
-impl Default for AlgoliaSearchQuery {
-    fn default() -> Self {
-        Self {
-            query: String::new(),
-            filters: None,
-            facets: None,
-            page: None,
-            hits_per_page: None,
-            highlight_pre_tag: None,
-            highlight_post_tag: None,
-            attributes_to_retrieve: None,
-            sort: None,
-            facet_filters: None,
-            numeric_filters: None,
-            tag_filters: None,
-            attributes_to_highlight: None,
-            attributes_to_snippet: None,
-            highlight_pre_tag_override: None,
-            highlight_post_tag_override: None,
-            restrict_highlight_and_snippet_arrays: None,
-            get_ranking_info: None,
-            distinct: None,
-            typo_tolerance: None,
-            analytics: None,
-            synonyms: None,
-            replaceSynonymsInHighlight: None,
-            minProximity: None,
-        }
-    }
 }
