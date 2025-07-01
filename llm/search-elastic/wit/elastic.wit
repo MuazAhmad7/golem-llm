@@ -1,0 +1,6 @@
+package golem:search-elastic@1.0.0;
+
+world elasticsearch-provider {
+  import golem:search/types@1.0.0;
+  export golem:search/core@1.0.0;
+}

@@ -10,6 +10,8 @@ members = [
     "llm/openrouter",
     "llm/search-algolia",
     "llm/search",
+    "llm/search-elastic",
+    "llm/search-opensearch"
 ]
 
 [profile.release]
