@@ -5,6 +5,7 @@ use log::{debug, error, info};
 
 mod client;
 mod conversions;
+pub mod degradation;
 
 use client::{ElasticClient, ElasticConfig};
 use conversions::*;

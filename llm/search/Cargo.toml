@@ -33,6 +33,12 @@ reqwest = { workspace = true, features = ["json"] }
 # Logging
 log = { workspace = true }
 
+# Regex for highlighting fallback
+regex = "1.10"
+
+# Date/time handling for test reports
+chrono = { version = "0.4", features = ["serde"] }
+
 # Environment variables
 dotenvy = "0.15"
 
@@ -44,9 +50,6 @@ url = "2.4"
 
 # Base64 encoding
 base64 = { workspace = true }
-
-# Date/time handling
-chrono = { version = "0.4", features = ["serde"] }
 
 # Golem integration
 golem-rust = { workspace = true, optional = true }

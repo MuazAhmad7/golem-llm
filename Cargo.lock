@@ -523,6 +523,7 @@ dependencies = [
  "dotenvy",
  "golem-rust",
  "log",
+ "regex",
  "reqwest",
  "serde",
  "serde_json",

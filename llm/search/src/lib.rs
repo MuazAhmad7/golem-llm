@@ -3,8 +3,11 @@
 //! This library provides shared functionality for implementing search providers
 //! that conform to the `golem:search` interface specification.
 
+pub mod capabilities;
 pub mod config;
 pub mod error;
+pub mod fallbacks;
+pub mod testing;
 pub mod types;
 pub mod utils;
 
@@ -15,6 +18,9 @@ pub mod durability;
 pub use error::{SearchError, SearchResult};
 pub use types::{SearchProvider, SearchCapabilities};
 pub use config::SearchConfig;
+pub use capabilities::{CapabilityMatrix, ProviderCapabilities, FeatureSupport, DegradationStrategy};
+pub use fallbacks::FallbackProcessor;
+pub use testing::{TestConfig, TestResult, ProviderTestRunner, TestDataGenerator, UniversalTestQueries};
 
 // TODO: WIT bindings will be generated here when the WIT file is properly configured
 // wit_bindgen::generate!({
