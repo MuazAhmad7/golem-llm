@@ -1,0 +1,225 @@
+# Overview
+This project aims to develop a suite of plug-and-play search components for the Golem platform, providing a universal search interface across various ecosystems. By implementing each search provider as a standalone WASM component, we ensure robust, interoperable search functionality, empowering developers to seamlessly integrate their preferred search engine. This initiative directly supports Alpha's vision for a dynamic and adaptable Golem platform in Zeta. 🌌
+
+# Core Features
+This project will deliver distinct WASM components for the following search providers, each fully implementing the `golem:search` interface:
+
+*   **ElasticSearch (`search-elastic.wasm`)**: A powerful distributed search engine, offering full-text capabilities, scroll-based pagination, and flexible schema.
+*   **OpenSearch (`search-opensearch.wasm`)**: An AWS-backed fork of ElasticSearch with extended features, including index lifecycle management, snapshots, and cluster APIs.
+*   **Algolia (`search-algolia.wasm`)**: (Already completed) A developer-friendly hosted search API optimized for instant search and relevance tuning, with support for filters, pagination, and ranking.
+*   **Typesense (`search-typesense.wasm`)**: A lightweight open-source search engine focused on simplicity and speed, supporting schema enforcement, vector fields, and filters.
+*   **Meilisearch (`search-meilisearch.wasm`)**: A modern, fast, and open-source search engine with support for faceting, typo tolerance, and ranked search, now including vector support.
+
+Each component will adhere to the following principles:
+*   Compile cleanly with `cargo component` targeting WASI 0.23.
+*   Utilize environment variables for all configuration and authentication.
+*   Integrate Golem durability APIs for consistent and resumable execution.
+*   Handle unsupported features gracefully using `search-error.unsupported` or `option<T>` fields.
+
+# User Experience
+The primary user persona for these components is a developer leveraging the Golem platform. The user experience focuses on:
+*   **Ease of Integration**: Developers can easily swap between search providers by simply replacing the WASM component and configuring environment variables, without changing their application logic.
+*   **Consistent API**: The unified `golem:search` WIT interface provides a predictable and consistent API across all providers, reducing learning curves and integration effort.
+*   **Robustness**: The integration with Golem durability ensures reliable and resumable search operations, even in the face of interruptions.
+*   **Flexibility**: The graceful degradation strategy allows developers to use providers with varying feature sets, adapting to their specific needs without breaking functionality.
+
+# Technical Architecture
+The core of this project is the `golem:search` WebAssembly Interface Type (WIT) specification, which defines a universal contract for search operations. Each provider will be implemented as a Rust WASM component that adheres to this interface.
+
+**WIT Specification (`package golem:search@1.0.0`)**:
+
+```wit
+package golem:search@1.0.0;
+
+/// Core types and error handling for universal search interfaces
+interface types {
+  /// Common structured errors for search operations
+  variant search-error {
+    index-not-found,
+    invalid-query(string),
+    unsupported,
+    internal(string),
+    timeout,
+    rate-limited,
+  }
+
+  /// Identifier types
+  type index-name = string;
+  type document-id = string;
+  type json = string;
+
+  /// Document payload
+  record doc {
+    id: document-id,
+    content: json,
+  }
+
+  /// Highlight configuration
+  record highlight-config {
+    fields: list<string>,
+    pre-tag: option<string>,
+    post-tag: option<string>,
+    max-length: option<u32>,
+  }
+
+  /// Advanced search tuning
+  record search-config {
+    timeout-ms: option<u32>,
+    boost-fields: list<tuple<string, f32>>,
+    attributes-to-retrieve: list<string>,
+    language: option<string>,
+    typo-tolerance: option<bool>,
+    exact-match-boost: option<f32>,
+    provider-params: option<json>,
+  }
+
+  /// Search request
+  record search-query {
+    q: option<string>,
+    filters: list<string>,
+    sort: list<string>,
+    facets: list<string>,
+    page: option<u32>,
+    per-page: option<u32>,
+    offset: option<u32>,
+    highlight: option<highlight-config>,
+    config: option<search-config>,
+  }
+
+  /// Search hit
+  record search-hit {
+    id: document-id,
+    score: option<f64>,
+    content: option<json>,
+    highlights: option<json>,
+  }
+
+  /// Search result set
+  record search-results {
+    total: option<u32>,
+    page: option<u32>,
+    per-page: option<u32>,
+    hits: list<search-hit>,
+    facets: option<json>,
+    took-ms: option<u32>,
+  }
+
+  /// Field schema types
+  enum field-type {
+    text,
+    keyword,
+    integer,
+    float,
+    boolean,
+    date,
+    geo-point,
+  }
+
+  /// Field definition
+  record schema-field {
+    name: string,
+    type: field-type,
+    required: bool,
+    facet: bool,
+    sort: bool,
+    index: bool,
+  }
+
+  /// Index schema
+  record schema {
+    fields: list<schema-field>,
+    primary-key: option<string>,
+  }
+}
+
+/// Unified search interface
+interface core {
+  use types.{
+    index-name, document-id, doc, search-query, search-results,
+    search-hit, schema, search-error
+  };
+
+  // Index lifecycle
+  create-index: func(name: index-name, schema: option<schema>) -> result<_, search-error>;
+  delete-index: func(name: index-name) -> result<_, search-error>;
+  list-indexes: func() -> result<list<index-name>, search-error>;
+
+  // Document operations
+  upsert: func(index: index-name, doc: doc) -> result<_, search-error>;
+  upsert-many: func(index: index-name, docs: list<doc>) -> result<_, search-error>;
+  delete: func(index: index-name, id: document-id) -> result<_, search-error>;
+  delete-many: func(index: index-name, ids: list<document-id>) -> result<_, search-error>;
+  get: func(index: index-name, id: document-id) -> result<option<doc>, search-error>;
+
+  // Query
+  search: func(index: index-name, query: search-query) -> result<search-results, search-error>;
+  stream-search: func(index: index-name, query: search-query) -> result<stream<search-hit>, search-error>;
+
+  // Schema inspection
+  get-schema: func(index: index-name) -> result<schema, search-error>;
+  update-schema: func(index: index-name, schema: schema) -> result<_, search-error>;
+}
+```
+
+**Configuration via Environment Variables**:
+*   **Common**:
+    *   `SEARCH_PROVIDER_ENDPOINT`
+    *   `SEARCH_PROVIDER_TIMEOUT` (default: 30)
+    *   `SEARCH_PROVIDER_MAX_RETRIES` (default: 3)
+    *   `SEARCH_PROVIDER_LOG_LEVEL`
+*   **Provider-Specific Examples**:
+    *   `ALGOLIA_APP_ID`, `ALGOLIA_API_KEY`
+    *   `MEILISEARCH_API_KEY`
+    *   `ELASTIC_PASSWORD`, `ELASTIC_CLOUD_ID`
+
+**Graceful Degradation Strategy**:
+The `golem:search` interface leverages `option<T>` and `search-error.unsupported` to enable partial implementations across providers. This includes:
+*   Providers that do not support index creation can return `unsupported`.
+*   Schema-inspecting APIs may return empty or inferred schema information.
+*   Facets, highlights, or document scores may be omitted if not available.
+*   Streaming search can fallback to paginated batches internally.
+*   Provider-specific features can be safely ignored unless explicitly declared in `provider-params`.
+
+# Development Roadmap
+The development will proceed in phases, with each phase focusing on the implementation and comprehensive testing of a specific search provider.
+
+1.  **ElasticSearch Component (`search-elastic.wasm`)**:
+    *   Full implementation of `golem:search` core and types interfaces.
+    *   Integration with ElasticSearch API.
+    *   Configuration via environment variables.
+    *   Full test coverage.
+2.  **OpenSearch Component (`search-opensearch.wasm`)**:
+    *   Full implementation of `golem:search` core and types interfaces.
+    *   Integration with OpenSearch API.
+    *   Configuration via environment variables.
+    *   Full test coverage.
+3.  **Typesense Component (`search-typesense.wasm`)**:
+    *   Full implementation of `golem:search` core and types interfaces.
+    *   Integration with Typesense API.
+    *   Configuration via environment variables.
+    *   Full test coverage.
+4.  **Meilisearch Component (`search-meilisearch.wasm`)**:
+    *   Full implementation of `golem:search` core and types interfaces.
+    *   Integration with Meilisearch API.
+    *   Configuration via environment variables.
+    *   Full test coverage.
+
+# Logical Dependency Chain
+The Algolia component is already complete. The remaining providers can be developed in parallel or in any order, as they are designed to be standalone. However, focusing on one provider at a time, ensuring its complete functionality and test coverage, will be the most efficient approach to maintain quality and accelerate progress. The priority is to get a robust set of options available for the Golem platform. 🛠️
+
+# Risks and Mitigations
+*   **Technical Challenges**:
+    *   **API Differences**: Each search provider has unique API behaviors and capabilities.
+        *   *Mitigation*: Thoroughly map each provider's API to the `golem:search` interface. Utilize the graceful degradation (`option<T>`, `search-error.unsupported`) for non-universally supported features.
+    *   **WASM Compatibility**: Ensuring all Rust dependencies and external crates compile correctly for the WASI 0.23 target.
+        *   *Mitigation*: Proactive testing of dependencies for WASM compatibility. Isolate problematic crates and seek alternatives or upstream fixes.
+    *   **Durability Integration**: Ensuring Golem durability APIs are correctly integrated for all operations.
+        *   *Mitigation*: Dedicated testing for durability scenarios, including partial executions and restarts.
+*   **Resource Constraints**:
+    *   **Expertise**: Needing deep understanding of each search engine's nuances.
+        *   *Mitigation*: Leverage Alpha's guidance and Zeta's information-gathering capabilities to quickly acquire necessary knowledge.
+*   **Figuring out the MVP**: The current plan already defines the MVP as the set of five search providers.
+    *   *Mitigation*: Strict adherence to the `golem:search` WIT specification for core functionality, deferring provider-specific enhancements to future iterations.
+
+# Appendix
+The comprehensive `golem:search` WIT specification, outlining all types and interfaces, is detailed within the "Technical Architecture" section of this document. This serves as the single source of truth for all component implementations. 📖 
