@@ -1,0 +1,120 @@
+package golem:search-meilisearch@1.0.0;
+
+world meilisearch-provider {
+  import golem:search/types@1.0.0;
+  export golem:search/core@1.0.0;
+}
+
+package golem:search@1.0.0 {
+  interface types {
+    variant field-type {
+      text,
+      keyword,
+      integer,
+      float,
+      boolean,
+      date,
+      geo-point,
+    }
+
+    record schema-field {
+      name: string,
+      field-type: field-type,
+      required: bool,
+      facet: bool,
+      sort: bool,
+      index: bool,
+    }
+
+    record schema {
+      fields: list<schema-field>,
+      primary-key: option<string>,
+    }
+
+    record doc {
+      id: string,
+      content: string,
+    }
+
+    record highlight-config {
+      fields: list<string>,
+      pre-tag: option<string>,
+      post-tag: option<string>,
+      fragment-size: option<u32>,
+      number-of-fragments: option<u32>,
+    }
+
+    record search-query {
+      q: option<string>,
+      filters: list<string>,
+      sort: list<string>,
+      page: option<u32>,
+      per-page: option<u32>,
+      offset: option<u32>,
+      facets: list<string>,
+      highlight: option<highlight-config>,
+    }
+
+    record search-hit {
+      id: string,
+      score: option<f64>,
+      content: option<string>,
+      highlights: option<string>,
+    }
+
+    record search-results {
+      total: option<u32>,
+      page: option<u32>,
+      per-page: option<u32>,
+      hits: list<search-hit>,
+      facets: option<string>,
+      took-ms: option<u32>,
+    }
+
+    record search-capabilities {
+      supports-index-creation: bool,
+      supports-schema-definition: bool,
+      supports-facets: bool,
+      supports-highlighting: bool,
+      supports-full-text-search: bool,
+      supports-vector-search: bool,
+      supports-streaming: bool,
+      supports-geo-search: bool,
+      supports-aggregations: bool,
+      max-batch-size: option<u32>,
+      max-query-size: option<u32>,
+      supported-field-types: list<field-type>,
+      provider-features: string,
+    }
+
+    variant search-error {
+      index-not-found(string),
+      invalid-query(string),
+      timeout,
+      rate-limited,
+      internal(string),
+      unsupported(string),
+    }
+  }
+
+  interface core {
+    use types.{
+      search-query, search-results, doc, schema, search-capabilities,
+      search-error
+    };
+
+    search: func(index: string, query: search-query) -> result<search-results, search-error>;
+    upsert: func(index: string, doc: doc) -> result<_, search-error>;
+    get: func(index: string, id: string) -> result<option<doc>, search-error>;
+    delete: func(index: string, id: string) -> result<_, search-error>;
+    
+    create-index: func(name: string, schema: option<schema>) -> result<_, search-error>;
+    delete-index: func(name: string) -> result<_, search-error>;
+    list-indexes: func() -> result<list<string>, search-error>;
+    get-schema: func(index: string) -> result<schema, search-error>;
+    
+    get-capabilities: func() -> search-capabilities;
+    batch-upsert: func(index: string, docs: list<doc>) -> result<_, search-error>;
+    health-check: func() -> result<_, search-error>;
+  }
+}
