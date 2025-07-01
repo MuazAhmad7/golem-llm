@@ -1,0 +1,62 @@
+[package]
+name = "golem-search-meilisearch"
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0"
+homepage = "https://golem.cloud"
+repository = "https://github.com/golemcloud/golem-llm"
+description = "WebAssembly component for Meilisearch integration, with special support for Golem Cloud"
+
+[lib]
+path = "src/lib.rs"
+crate-type = ["cdylib", "rlib"]
+
+[features]
+default = ["durability"]
+durability = ["golem-search/durability"]
+
+[dependencies]
+# Common search library
+golem-search = { path = "../search" }
+
+# HTTP client for Meilisearch API
+reqwest = { workspace = true, features = ["json"] }
+
+# Serialization
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+
+# Error handling
+anyhow = { workspace = true }
+thiserror = "1.0"
+
+# Async runtime
+tokio = { version = "1.0", features = ["full"] }
+
+# Logging
+log = { workspace = true }
+
+# URL handling
+url = "2.4"
+
+# Base64 for auth
+base64 = { workspace = true }
+
+# UUID generation
+uuid = { version = "1.0", features = ["v4"] }
+
+# WIT bindings
+wit-bindgen = "0.40.0"
+wit-bindgen-rt = { workspace = true }
+
+# Golem integration
+golem-rust = { workspace = true, optional = true }
+
+[package.metadata.component]
+package = "golem:search-meilisearch"
+
+[package.metadata.component.bindings]
+generate_unused_types = true
+
+[package.metadata.component.target]
+path = "wit"

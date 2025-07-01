@@ -150,7 +150,7 @@ dependencies = [
  "semver",
  "serde",
  "serde_json",
- "thiserror",
+ "thiserror 2.0.12",
 ]
 
 [[package]]
@@ -208,6 +208,12 @@ dependencies = [
  "quote",
  "syn",
 ]
+
+[[package]]
+name = "dotenvy"
+version = "0.15.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1aaf95b3e5c8f23aa320147307562d361db0ae0d51242340f558153b4eb2439b"
 
 [[package]]
 name = "encoding_rs"
@@ -399,12 +405,12 @@ dependencies = [
 name = "golem-llm"
 version = "0.0.0"
 dependencies = [
- "golem-rust",
+ "golem-rust 1.6.0",
  "log",
  "mime",
  "nom",
  "reqwest",
- "thiserror",
+ "thiserror 2.0.12",
  "wasi-logger",
  "wit-bindgen 0.40.0",
 ]
@@ -415,7 +421,7 @@ version = "0.0.0"
 dependencies = [
  "base64 0.22.1",
  "golem-llm",
- "golem-rust",
+ "golem-rust 1.6.0",
  "log",
  "reqwest",
  "serde",
@@ -429,7 +435,7 @@ version = "0.0.0"
 dependencies = [
  "base64 0.22.1",
  "golem-llm",
- "golem-rust",
+ "golem-rust 1.6.0",
  "log",
  "reqwest",
  "serde",
@@ -443,7 +449,7 @@ version = "0.0.0"
 dependencies = [
  "base64 0.21.7",
  "golem-llm",
- "golem-rust",
+ "golem-rust 1.6.0",
  "log",
  "mime_guess",
  "reqwest",
@@ -459,7 +465,7 @@ version = "0.0.0"
 dependencies = [
  "base64 0.22.1",
  "golem-llm",
- "golem-rust",
+ "golem-rust 1.6.0",
  "log",
  "reqwest",
  "serde",
@@ -473,12 +479,23 @@ version = "0.0.0"
 dependencies = [
  "base64 0.22.1",
  "golem-llm",
- "golem-rust",
+ "golem-rust 1.6.0",
  "log",
  "reqwest",
  "serde",
  "serde_json",
  "wit-bindgen-rt 0.40.0",
+]
+
+[[package]]
+name = "golem-rust"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cfc1ecd87be3fc27ffbd12bb2e14b6a2bb463bc4e6714a250df2d7a79cda5c95"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
 ]
 
 [[package]]
@@ -508,6 +525,28 @@ dependencies = [
 ]
 
 [[package]]
+name = "golem-search"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "base64 0.22.1",
+ "chrono",
+ "dotenvy",
+ "golem-rust 0.1.0",
+ "log",
+ "regex",
+ "reqwest",
+ "serde",
+ "serde_json",
+ "thiserror 1.0.69",
+ "tokio",
+ "url",
+ "uuid",
+ "wit-bindgen 0.40.0",
+ "wit-bindgen-rt 0.40.0",
+]
+
+[[package]]
 name = "golem-search-algolia"
 version = "0.0.0"
 dependencies = [
@@ -515,11 +554,91 @@ dependencies = [
  "async-trait",
  "base64 0.22.1",
  "env_logger",
- "golem-rust",
+ "golem-rust 1.6.0",
  "log",
  "reqwest",
  "serde",
  "serde_json",
+ "tokio",
+ "url",
+ "uuid",
+ "wit-bindgen 0.40.0",
+ "wit-bindgen-rt 0.40.0",
+]
+
+[[package]]
+name = "golem-search-elastic"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "base64 0.22.1",
+ "golem-rust 1.6.0",
+ "golem-search",
+ "log",
+ "reqwest",
+ "serde",
+ "serde_json",
+ "thiserror 1.0.69",
+ "tokio",
+ "url",
+ "uuid",
+ "wit-bindgen 0.40.0",
+ "wit-bindgen-rt 0.40.0",
+]
+
+[[package]]
+name = "golem-search-meilisearch"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "base64 0.22.1",
+ "golem-rust 1.6.0",
+ "golem-search",
+ "log",
+ "reqwest",
+ "serde",
+ "serde_json",
+ "thiserror 1.0.69",
+ "tokio",
+ "url",
+ "uuid",
+ "wit-bindgen 0.40.0",
+ "wit-bindgen-rt 0.40.0",
+]
+
+[[package]]
+name = "golem-search-opensearch"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "base64 0.22.1",
+ "golem-rust 1.6.0",
+ "golem-search",
+ "log",
+ "reqwest",
+ "serde",
+ "serde_json",
+ "thiserror 1.0.69",
+ "tokio",
+ "url",
+ "uuid",
+ "wit-bindgen 0.40.0",
+ "wit-bindgen-rt 0.40.0",
+]
+
+[[package]]
+name = "golem-search-typesense"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "base64 0.22.1",
+ "golem-rust 1.6.0",
+ "golem-search",
+ "log",
+ "reqwest",
+ "serde",
+ "serde_json",
+ "thiserror 1.0.69",
  "tokio",
  "url",
  "uuid",
@@ -1208,11 +1327,31 @@ dependencies = [
 
 [[package]]
 name = "thiserror"
+version = "1.0.69"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b6aaf5339b578ea85b50e080feb250a3e8ae8cfcdff9a461c9ec2904bc923f52"
+dependencies = [
+ "thiserror-impl 1.0.69",
+]
+
+[[package]]
+name = "thiserror"
 version = "2.0.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "567b8a2dae586314f7be2a752ec7474332959c6460e02bde30d702a66d488708"
 dependencies = [
- "thiserror-impl",
+ "thiserror-impl 2.0.12",
+]
+
+[[package]]
+name = "thiserror-impl"
+version = "1.0.69"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4fee6c4efc90059e10f81e6d42c60a18f76588c3d74cb83a0b242a2b6c7504c1"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
 ]
 
 [[package]]

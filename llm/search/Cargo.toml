@@ -1,0 +1,68 @@
+[package]
+name = "golem-search"
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0"
+homepage = "https://golem.cloud"
+repository = "https://github.com/golemcloud/golem-llm"
+description = "Common library for Golem search provider components"
+
+[lib]
+path = "src/lib.rs"
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+# WIT bindings
+wit-bindgen = "0.40.0"
+wit-bindgen-rt = { workspace = true }
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# Error handling
+anyhow = { workspace = true }
+thiserror = "1.0"
+
+# Async runtime
+tokio = { version = "1.0", features = ["full"] }
+
+# HTTP client
+reqwest = { workspace = true, features = ["json"] }
+
+# Logging
+log = "0.4"
+
+# Regex for highlighting fallback
+regex = "1.0"
+
+# Date/time handling for test reports
+chrono = { version = "0.4", features = ["serde"] }
+
+# Environment variables
+dotenvy = "0.15"
+
+# UUID generation
+uuid = { version = "1.0", features = ["v4", "serde"] }
+
+# URL parsing
+url = "2.4"
+
+# Base64 encoding
+base64 = { workspace = true }
+
+# Golem integration
+golem-rust = { version = "0.1", optional = true }
+
+[features]
+default = []
+durability = ["golem-rust"]
+
+[package.metadata.component]
+package = "golem:search"
+
+[package.metadata.component.bindings]
+generate_unused_types = true
+
+[package.metadata.component.target]
+path = "wit"

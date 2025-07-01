@@ -9,6 +9,11 @@ members = [
     "llm/openai",
     "llm/openrouter",
     "llm/search-algolia",
+    "llm/search",
+    "llm/search-elastic",
+    "llm/search-opensearch",
+    "llm/search-typesense",
+    "llm/search-meilisearch"
 ]
 
 [profile.release]
