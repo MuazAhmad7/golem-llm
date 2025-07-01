@@ -9,6 +9,7 @@ members = [
     "llm/openai",
     "llm/openrouter",
     "llm/search-algolia",
+    "llm/search",
 ]
 
 [profile.release]
